@@ -1,1 +1,1 @@
-"Firmware": 1.1.1
+"Firmware": 1.1.2
