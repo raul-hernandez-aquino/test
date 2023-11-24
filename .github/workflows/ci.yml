@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "release**"]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release**" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,6 +25,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout to branch
+        uses: actions/checkout@v3
+
       - name: ssh-agent-submodule-fix
         uses: webfactory/ssh-agent@v0.8.0
         with:
@@ -34,6 +38,6 @@ jobs:
       - name: Run a multi-line script
         run: |
               cd ~/Documents/github_test/_work/test/test
-              git pull
               git submodule update --init --recursive
+              git pull
               node index.js
