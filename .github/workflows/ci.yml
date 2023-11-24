@@ -32,6 +32,6 @@ jobs:
       - name: Run a multi-line script
         run: |
               cd ~/Documents/github_test/_work/test/test
-              git pull
               git submodule update --init --recursive
+              git pull
               node index.js
