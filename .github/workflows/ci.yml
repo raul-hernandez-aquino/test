@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ test-farm ] # Replace with your runner names
+        runner: [ test-pi ] # Replace with your runner names
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
