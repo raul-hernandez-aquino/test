@@ -45,7 +45,7 @@ jobs:
       - name: HTTP request to QA API
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://switchee.free.beeceptor.com'
+          url: 'https://switchee.free.beeceptor.com/test'
           method: 'POST'
           data: '{}'
           #username: ${{ secrets.AWX_USER }}
