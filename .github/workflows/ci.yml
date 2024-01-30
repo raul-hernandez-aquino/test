@@ -36,21 +36,31 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
+        id: myRequest
         run: |
               cd ~/Documents/github_test/_work/test/test
               git submodule update --init --recursive
               git pull
               node index.js
-      #Push a HTTP requeste
+      #Push a HTTP request for new firmware binaries (artifact) generated
       - name: HTTP request to QA API
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://switchee.free.beeceptor.com/test'
+          url: 'https://api-auth.qa.switchee.co/oauth2/token'
           method: 'POST'
-          data: '{}'
+          contentType: 'application/x-www-form-urlencoded'
+          customHeaders: '{"Content-Type": "application/json", "authorization": "Basic M2wwaWJsMDhlZ3FlZHFrOTZ2b2VsZms3Nmc6N2o2b3QyamMwdHBnbTVuamwxN2gwZTlqcnFlY3BkYmoyMm1lNWpzb2ptYXE1ZnMxMXBz"}'
+          data: '{"grant_type" : "client_credentials", "scope" = "https://api.qa.switchee.co/api.client"}'
           #username: ${{ secrets.AWX_USER }}
           #password: ${{ secrets.AWX_PASSWORD }}
           #customHeaders: '{"Content-Type": "application/json"}'
           #data: '{"key_1": "value_1", "key_2": "value_2"}'
+      - name: Response from request
+        run: |
+          echo ${{ steps.myRequest.outputs.response }}
+          echo ${{ steps.myRequest.outputs.headers }}
+          echo ${{ fromJson(steps.myRequest.outputs.response).field_you_want_to_access }}
+        
+          
   
         
