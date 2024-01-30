@@ -43,7 +43,7 @@ jobs:
           customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
       - name: Response from request
         run: |
-          echo ${{steps.updateFirmwareRequest.outputs.response }}     
+          echo ${{steps.updateFirmwareRequest.outputs }}     
           echo ${{ fromJson(steps.updateFirmwareRequest.outputs.response) }}        
           
   
