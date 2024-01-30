@@ -40,7 +40,9 @@ jobs:
         with:
           url: 'https://api.qa.switchee.co/v2.0/properties'
           method: 'GET'
-          customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
+          #customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "aa", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
+
       - name: Response from request
         run: |
           echo ${{ fromJson(steps.updateFirmwareRequest.outputs) }}     
