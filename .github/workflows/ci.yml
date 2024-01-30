@@ -22,6 +22,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       #Push a HTTP request for new firmware binaries (artifact) generated
+      - name: Generate base 64 data
+        run: |
+          echo "AUTHORIZATION_DATA=$(echo -n '3l0ibl08egqedqk96voelfk76g:7j6ot2jc0tpgm5njl17h0e9jrqecpdbj22me5jsojmaq5fs11ps' | base64)" >> $GITHUB_ENV
+          echo ${{env.AUTHORIZATION_DATA}}
       - name: Token request to QA API
         id: tokenRequest
         uses: fjogeleit/http-request-action@v1
@@ -40,9 +44,7 @@ jobs:
         with:
           url: 'https://api.qa.switchee.co/v2.0/properties'
           method: 'GET'
-          #customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          customHeaders: '{"Content-Type": "application/json", "Authorization": "aa", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
       - name: Response from request
         run: |
           echo ${{ steps.updateFirmwareRequest.outputs }}     
