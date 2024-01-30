@@ -45,7 +45,7 @@ jobs:
 
       - name: Response from request
         run: |
-          echo ${{ fromJson(steps.updateFirmwareRequest.outputs) }}     
+          echo ${{ steps.updateFirmwareRequest.outputs }}     
           echo ${{ fromJson(steps.updateFirmwareRequest.outputs.response) }}        
           
   
