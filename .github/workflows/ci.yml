@@ -9,9 +9,13 @@ on:
     branches: [ "main" , "release**"]
   pull_request:
     branches: [ "main", "release**" ]
-
+    
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+env:
+  AUTHENTICATION_URL: 'https://api-auth.qa.switchee.co/oauth2/token'
+  POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,7 +30,7 @@ jobs:
         id: tokenRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://api-auth.qa.switchee.co/oauth2/token'
+          url: ${{ AUTHENTICATION_URL}}
           method: 'POST'
           customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic ${{ secrets.AUTHORIZATION_DATA }}"}'
           data: '{"grant_type" : "client_credentials", "scope" : "https://api.qa.switchee.co/api.client"}'
@@ -38,11 +42,12 @@ jobs:
         id: updateFirmwareRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://api.qa.switchee.co/v2.0/properties'
+          url: ${{ POST_FIRMWARE_URL}}
           method: 'GET'
           #method: 'POST' 
           customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          #data: '{"name" : "${{ env.GH_FW_VERSION_FULL }}"}'
+          #data: '{"type":"Gen 2 Hub", "gh-artefact" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{}}",  "display": "${GITHUB_REPOSITORY}", }'
+          #customHeaders: '{"Content-Type": "application/json"}'
       - name: Response from request
         run: |
           echo ${{ steps.updateFirmwareRequest.outputs }}     
