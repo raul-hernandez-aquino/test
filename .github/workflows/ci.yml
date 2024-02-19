@@ -18,8 +18,6 @@ env:
   POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
   
   
-  
-  APP_PATH: ${{ github.workspace }}/app
   TEST_URL: 'https://switchee.free.beeceptor.com'
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -48,6 +46,7 @@ jobs:
 
   
           echo "GH_FW_VERSION_FULL=3.2.0-rc1" >>$GITHUB_ENV
+          echo "HELLO WORLD!!!!!"
           echo "${{env.GH_FW_VERSION_FULL}}"
       ################# Post firmware arctifact info to QA API ##############
       - name: Post firmware name to QA API
