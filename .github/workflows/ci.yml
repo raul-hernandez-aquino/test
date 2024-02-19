@@ -54,6 +54,7 @@ jobs:
 
           
           echo "GH_FW_VERSION_FULL=3.2.0-rc1" >>$GITHUB_ENV
+          echo "${{env.GH_FW_VERSION_FULL}}
       ################# Post firmware arctifact info to QA API ##############
       - name: Post firmware name to QA API
         id: postFirmwareRequest
