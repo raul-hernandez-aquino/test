@@ -47,7 +47,8 @@ jobs:
         id: postFirmwareRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ env.POST_FIRMWARE_URL}}        
+          #url: ${{ env.POST_FIRMWARE_URL}}        
+          url:  ${{env.TEST_URL}}
           method: 'POST' 
           customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
           data: '{"type":"Gen 2 Hub", "gh_artifact_id" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{env.GITHUB_REPOSITORY}}",  "display": "${{ env.GH_FW_VERSION_FULL }}"}'
