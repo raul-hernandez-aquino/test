@@ -28,7 +28,7 @@ jobs:
       ############# Authenticate#####################
       - name: Encode credentials
         run: |
-          echo "AUTHORIZATION_DATA=${echo -n "fp1kou9fr6ch54dkd22iavdv9:1jeq63sb0c5e3s4e0ft7ruprc3j023gart1smgqaebat26vevt3r" | base64}" >> $GITHUB_ENV
+          echo "AUTHORIZATION_DATA=$(echo -n "fp1kou9fr6ch54dkd22iavdv9:1jeq63sb0c5e3s4e0ft7ruprc3j023gart1smgqaebat26vevt3r" | base64)" >> $GITHUB_ENV
           echo "${{env.AUTHORIZATION_DATA}}"
       #Request token from QA API
       - name: Token request to QA API
