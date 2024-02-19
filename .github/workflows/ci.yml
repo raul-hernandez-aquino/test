@@ -30,12 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: checkout app
-        uses: actions/checkout@v3
-        with:
-          path: ${{ env.APP_PATH }}
-          fetch-depth: 0
-          fetch-tags: true
       ############# Authenticate#####################
       #Request token from QA API
       - name: Token request to QA API
