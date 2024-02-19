@@ -17,9 +17,6 @@ env:
   AUTHENTICATION_URL: 'https://api-auth.qa.switchee.co/oauth2/token'
   POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
   
-  #AUTHENTICATION_URL: 'https://company.free.beeceptor.com'
-  #POST_FIRMWARE_URL: 'https://company.free.beeceptor.com'
-  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "update cloud"
@@ -28,36 +25,37 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      #Push a HTTP request for new firmware binaries (artifact) generated
+      ############# Authenticate#####################
+      - name: Encode credentials
+        run: |
+          echo "AUTHORIZATION_DATA=echo -n "fp1kou9fr6ch54dkd22iavdv9:1jeq63sb0c5e3s4e0ft7ruprc3j023gart1smgqaebat26vevt3r" | base64" >> $GITHUB_ENV
+          echo "${{env.AUTHORIZATION_DATA}}"
+      #Request token from QA API
       - name: Token request to QA API
         id: tokenRequest
         uses: fjogeleit/http-request-action@v1
         with:
           url: ${{ env.AUTHENTICATION_URL}}
           method: 'POST'
-          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic ${{ secrets.AUTHORIZATION_DATA }}"}'
-          data: '{"grant_type" : "client_credentials", "scope" : "https://api.qa.switchee.co/api.client"}'
+          #customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic ${{ secrets.AUTHORIZATION_DATA }}"}'
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic ${{ env.AUTHORIZATION_DATA }}"}'
+          data: '{"grant_type" : "client_credentials", "scope" : "https://hooks.qa.switchee.co/device-automation"}'
+       #Check response from token request
       - name: Response from request
         run: |
           echo ${{ fromJson(steps.tokenRequest.outputs.response).access_token }}
           echo "ACCESS_TOKEN=${{ fromJson(steps.tokenRequest.outputs.response).access_token }}" >> $GITHUB_ENV
+          
+      ################# Post firmware arctifact info to QA API ##############
       - name: Post firmware name to QA API
-        id: updateFirmwareRequest
+        id: postFirmwareRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ env.POST_FIRMWARE_URL}}
-          method: 'GET'
+          url: ${{ env.POST_FIRMWARE_URL}}        
+          method: 'POST' 
           customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          
-          #method: 'POST' 
-          #customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          #data: '{"type":"Gen 2 Hub", "gh-artefact" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{GITHUB_REPOSITORY}}",  "display": "", "file":""}'
-          #customHeaders: '{"Content-Type": "application/json"}'
-          #method: 'POST' 
-          #customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          #data: '{"type":"Gen 2 Hub", "gh-artefact" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{GITHUB_REPOSITORY}}",  "display": "", "file":""}'
-          #customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"type":"Gen 2 Hub", "gh_artifact_id" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{GITHUB_REPOSITORY}}",  "display": "${{ env.GH_FW_VERSION_FULL }}"}'
       - name: Response from request
         run: |
-          echo ${{ steps.updateFirmwareRequest.outputs }}     
-          echo ${{ fromJson(steps.updateFirmwareRequest.outputs.response) }}        
+          echo ${{ steps.postFirmwareRequest.outputs }}     
+          echo ${{ fromJson(steps.postFirmwareRequest.outputs.response) }}        
