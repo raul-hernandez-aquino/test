@@ -16,6 +16,7 @@ on:
 env:
   AUTHENTICATION_URL: 'https://api-auth.qa.switchee.co/oauth2/token'
   POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
+  TEST_URL: 'https://switchee.free.beeceptor.com'
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -40,7 +41,7 @@ jobs:
         run: |
           echo ${{ fromJson(steps.tokenRequest.outputs.response).access_token }}
           echo "ACCESS_TOKEN=${{ fromJson(steps.tokenRequest.outputs.response).access_token }}" >> $GITHUB_ENV
-          
+          echo "GH_FW_VERSION_FULL=3.2.0-rc1" >>$GITHUB_ENV
       ################# Post firmware arctifact info to QA API ##############
       - name: Post firmware name to QA API
         id: postFirmwareRequest
