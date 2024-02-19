@@ -16,8 +16,11 @@ on:
 env:
   AUTHENTICATION_URL: 'https://api-auth.qa.switchee.co/oauth2/token'
   POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
+  
+  
+  
+  APP_PATH: ${{ github.workspace }}/app
   TEST_URL: 'https://switchee.free.beeceptor.com'
-  GH_REPO: ${{ env.GITHUB_REPOSITORY }}
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -27,6 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: checkout app
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.APP_PATH }}
+          fetch-depth: 0
+          fetch-tags: true
       ############# Authenticate#####################
       #Request token from QA API
       - name: Token request to QA API
@@ -54,7 +63,7 @@ jobs:
           url:  ${{env.TEST_URL}}
           method: 'POST' 
           customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
-          data: '{"type":"Gen 2 Hub", "gh_artifact_id" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{ env.GH_REPO }}",  "display": "${{ env.GH_FW_VERSION_FULL }}"}'
+          data: '{"type":"Gen 2 Hub", "gh_artifact_id" : "${{ env.GH_FW_VERSION_FULL }}", "repo_name": "${{ env.GITHUB_REPOSITORY }}",  "display": "${{ env.GH_FW_VERSION_FULL }}"}'
       - name: Response from request
         run: |
           echo ${{ steps.postFirmwareRequest.outputs }}     
