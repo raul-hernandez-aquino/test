@@ -1,1 +1,1 @@
-"Firmware": 5.1.11
+"Firmware": 5.1.12
