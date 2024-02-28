@@ -51,6 +51,8 @@ jobs:
 
           echo "${{github.ref}}"
           echo "${{github.event.ref_type}}"
+          echo "${{github.ref_type}}"
+          echo "${{github.ref_name}}"
           echo "GH_FW_VERSION_FULL=3.2.0-rc1" >>$GITHUB_ENV
       ################# Post firmware arctifact location info to QA API ##############
       - name: Post firmware name to QA API
