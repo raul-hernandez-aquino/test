@@ -16,24 +16,55 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-env:  
-  URL: 'http://127.0.0.1:1880/test'
+env:
+  AUTHENTICATION_URL: 'https://api-auth.qa.switchee.co/oauth2/token'
+  POST_FIRMWARE_URL: 'https://api.qa.switchee.co/v2.0/properties'
+  
+  
+  TEST_URL: 'https://switchee.free.beeceptor.com'
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "update cloud"
-  update-node-red:
+  update-cloud:
+    if: github.ref_type == 'tag'
     # The type of runner that the job will run on
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       ############# Authenticate#####################
       #Request token from QA API
-      - name: Update to Node-Red Dashboard
-        id: updateDashboard
+      - name: Token request to QA API
+        id: tokenRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ env.URL}}
-          method: 'GET'
-          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic TOKEN"}'
+          url: ${{ env.AUTHENTICATION_URL}}
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded", "Authorization": "Basic ${{ secrets.AUTHORIZATION_DATA }}"}'
           data: '{"grant_type" : "client_credentials", "scope" : "https://hooks.qa.switchee.co/device-automation"}'
+       
+       #Check response from token request and retrieve token
+      - name: Response from request
+        run: |
+          echo ${{ fromJson(steps.tokenRequest.outputs.response).access_token }}
+          echo "ACCESS_TOKEN=${{ fromJson(steps.tokenRequest.outputs.response).access_token }}" >> $GITHUB_ENV
+          echo "${{github.ref}}"
+          echo "${{github.event.ref_type}}"
+          echo "${{github.ref_type}}"
+          echo "${{github.ref_name}}"
+          echo "GH_FW_VERSION_FULL=3.2.0-rc1" >>$GITHUB_ENV
+      ################# Post firmware arctifact location info to QA API ##############
+      - name: Post firmware name to QA API
+        id: postFirmwareRequest
+        uses: fjogeleit/http-request-action@v1
+        with:
+          #url: ${{ env.POST_FIRMWARE_URL}}        
+          url:  ${{env.TEST_URL}}
+          method: 'POST' 
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ env.ACCESS_TOKEN }}", "x-api-key":"G0zz1oWEgBjHI1jw4qhp33ffuxcM1vF7ugDpSHu4"}'
+          data: '{"type":"G2", "device_type":"Hub", "gh_artifact_id" : "${{ env.GH_FW_VERSION_FULL }}", "description": "", "repo_name": "${{ github.event.repository.name }}"}'
+          
+      - name: Response from request
+        run: |
+          echo ${{ steps.postFirmwareRequest.outputs }}     
+          echo ${{ fromJson(steps.postFirmwareRequest.outputs.response) }}       
